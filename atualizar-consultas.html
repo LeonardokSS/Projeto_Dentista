@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Atualizar Consulta</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <h1 class="mb-4 text-center"><i class="bi bi-pencil-square"></i> Atualizar Consulta</h1>
+    <form action="/atualizar-consulta" method="POST" class="card p-4 shadow">
+      <!-- ID da consulta escondido -->
+      <input type="hidden" name="id" id="consultaId">
+
+      <!-- Nome do paciente -->
+      <div class="mb-3">
+        <label class="form-label">Nome do Paciente</label>
+        <input type="text" name="paciente_nome" id="pacienteNome" class="form-control" readonly>
+      </div>
+
+      <!-- Data -->
+      <div class="mb-3">
+        <label class="form-label">Data da Consulta</label>
+        <input type="date" name="data" id="consultaData" class="form-control" required>
+      </div>
+
+      <!-- Horário -->
+      <div class="mb-3">
+        <label class="form-label">Horário</label>
+        <input type="time" name="horario" id="consultaHorario" class="form-control" required>
+      </div>
+
+      <!-- Observações -->
+      <div class="mb-3">
+        <label class="form-label">Observações</label>
+        <textarea name="observacoes" id="consultaObs" class="form-control"></textarea>
+      </div>
+
+      <!-- Botões -->
+      <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        <a href="/consultas" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Pega o ID da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const consultaId = urlParams.get('id');
+
+    if (consultaId) {
+      document.getElementById('consultaId').value = consultaId;
+
+      // Busca os dados da consulta para preencher o formulário
+      fetch(`/lista_consultas`)
+        .then(res => res.json())
+        .then(consultas => {
+          const consulta = consultas.find(c => c._id === consultaId);
+          if (consulta) {
+            document.getElementById('pacienteNome').value = consulta.paciente_nome || 'N/A';
+            document.getElementById('consultaData').value = consulta.data || '';
+            document.getElementById('consultaHorario').value = consulta.horario || '';
+            document.getElementById('consultaObs').value = consulta.observacoes || '';
+          }
+        })
+        .catch(err => console.error("Erro ao carregar consulta:", err));
+    }
+  </script>
+</body>
+</html>

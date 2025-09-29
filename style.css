@@ -1,0 +1,29 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+h1, h2 {
+  color: #333;
+}
+
+nav a {
+  margin-right: 10px;
+  text-decoration: none;
+  color: blue;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+table {
+  margin-top: 20px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table, th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}

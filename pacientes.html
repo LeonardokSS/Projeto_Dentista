@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Pacientes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h1 class="text-center mb-4">Lista Pacientes</h1>
+                        <div class="text-center mb-4">
+                            <a href="/cadastro-pacientes" class="btn btn-primary mb-2">Cadastrar Novo Paciente</a>
+                            <a href="/" class="btn btn-secondary mb-2 ms-2">Voltar para Home</a>
+                        </div>
+                        <h2 class="text-center">Lista de Pacientes</h2>
+                        <table class="table table-bordered text-center">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Idade</th>
+                                    <th>Data de nascimento</th>
+                                    <th>RG</th>
+                                    <th>Telefone</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pacientes-tabela">
+                                <!-- Os dados serão preenchidos via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', ()=>{
+            // CORREÇÃO: Mudei para a rota correta '/api/pacientes'
+            fetch('/lista_pacientes')
+                .then(response => response.json())
+                .then(pacientes => {
+                    const tabela = document.getElementById('pacientes-tabela')
+                    tabela.innerHTML = pacientes.map(paciente => `
+                        <tr>
+                            <td>${paciente.nome || 'N/A'}</td>
+                            <td>${paciente.idade || 'N/A'}</td>
+                            <td>${paciente.data_nascimento || 'N/A'}</td>
+                            <td>${paciente.RG || 'N/A'}</td>
+                            <td>${paciente.telefone || 'N/A'}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="/atualizar-pacientes?id=${paciente._id}" class="btn btn-warning">Atualizar</a>
+                                    <form action="/deletar-pacientes" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este paciente?')">
+                                        <input type="hidden" name="id" value="${paciente._id}">
+                                        <button type="submit" class="btn btn-danger">Deletar</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar pacientes: ', error)
+                })
+        })
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+</body>
+</html>

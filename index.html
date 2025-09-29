@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Dentista</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2c7fb8;
+      --secondary-color: #7fcdbb;
+      --accent-color: #edf8b1;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .main-card {
+      border-radius: 15px;
+      border: none;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .main-card .card-body {
+      padding: 2.5rem;
+    }
+    
+    .page-title {
+      color: var(--primary-color);
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-card {
+      border-radius: 12px;
+      border: none;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      background: white;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .feature-card .card-img-top {
+      height: 180px;
+      object-fit: contain;
+      padding: 1.5rem;
+      background-color: var(--accent-color);
+    }
+    
+    .feature-title {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin: 1rem 0;
+      font-size: 1.4rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      border-radius: 50px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background-color: #1d5f8a;
+      border-color: #1d5f8a;
+      transform: scale(1.05);
+    }
+    
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .footer {
+      margin-top: 3rem;
+      text-align: center;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card main-card">
+          <div class="card-body">
+            <h1 class="text-center page-title">Sistema Odontológico</h1>
+            
+            <main>
+              <div class="row text-center justify-content-center">
+                <!-- Card Pacientes -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                  <div class="card feature-card h-100">
+                    <div class="card-header bg-transparent border-0 pt-3">
+                      <h3 class="feature-title">Pacientes</h3>
+                    </div>
+                    <img src="/paciente.png" class="card-img-top" alt="Ícone de Paciente">
+                    <div class="card-body">
+                      <p class="card-text text-muted mb-3">
+                        Gerencie o cadastro de pacientes, histórico médico e informações pessoais.
+                      </p>
+                      <a href="/pacientes" class="btn btn-primary mt-auto">Acessar</a>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Card Consultas -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                  <div class="card feature-card h-100">
+                    <div class="card-header bg-transparent border-0 pt-3">
+                      <h3 class="feature-title">Consultas</h3>
+                    </div>
+                    <img src="/consulta.png" class="card-img-top" alt="Ícone de Consulta">
+                    <div class="card-body">
+                      <p class="card-text text-muted mb-3">
+                        Agende, visualize e gerencie consultas, tratamentos e procedimentos.
+                      </p>
+                      <a href="/vendas" class="btn btn-primary mt-auto">Acessar</a>
+                    </div>
+                  </div>
+                </div>
+                
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "medicamentos-app",
+  "version": "1.0.0",
+  "description": "Sistema de cadastro de medicamentos com Node.js, Express e MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "method-override": "^3.0.0",
+    "mongodb": "^6.19.0"
+  }
+}
