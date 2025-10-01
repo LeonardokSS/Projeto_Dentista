@@ -26,11 +26,12 @@
                                     <th>Data de nascimento</th>
                                     <th>RG</th>
                                     <th>Telefone</th>
+                                    <th>Sobre</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="pacientes-tabela">
-                                <!-- Os dados serão preenchidos via JavaScript -->
+                             
                             </tbody>
                         </table>
                     </div>
@@ -53,6 +54,7 @@
                             <td>${paciente.data_nascimento || 'N/A'}</td>
                             <td>${paciente.RG || 'N/A'}</td>
                             <td>${paciente.telefone || 'N/A'}</td>
+                            <td>${paciente.sobre || 'N/A'}</td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
                                     <a href="/atualizar-pacientes?id=${paciente._id}" class="btn btn-warning">Atualizar</a>

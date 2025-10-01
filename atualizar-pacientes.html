@@ -34,6 +34,10 @@
                                 <label for="telefone">Telefone:</label>
                                 <input type="text" name="telefone" id="telefone" class="form-control" required>
                             </div>
+                            <div class="form-group">
+                                <label for="sobre">Sobre:</label>
+                                <input type="text" name="sobre" id="sobre" class="form-control" required>
+                            </div>
                             <button type="submit" class="btn btn-primary btn-block">Atualizar Paciente</button>
                         </form>
                     </div>
@@ -44,16 +48,17 @@
 <script>
     document.addEventListener('DOMContentLoaded', ()=>{
         const urlParams = new URLSearchParams(window.location.search)
-        const livroId = urlParams.get('id')
+        const Id = urlParams.get('id')
 
         if(livroId){
             fetch(`/pacientes/${livroId}`).then(response=>response.json()).then(livro=>{
-                document.getElementById('id').value = livro._id
-                document.getElementById('nome').value = livro.nome
-                document.getElementById('idade').value = livro.idade
-                document.getElementById('data_nascimento').value = livro.data_nascimento
-                document.getElementById('RG').value = livro.RG
-                document.getElementById('telefone').value = livro.telefone
+                document.getElementById('id').value = _id
+                document.getElementById('nome').value = nome
+                document.getElementById('idade').value = idade
+                document.getElementById('data_nascimento').value = data_nascimento
+                document.getElementById('RG').value = RG
+                document.getElementById('telefone').value = telefone
+                document.getElementById('sobre').value = sobre
             }).catch(error=>console.error('Erro ao carregar dados do paciente: ', error))
         }  
     })

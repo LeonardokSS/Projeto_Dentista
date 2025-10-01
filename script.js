@@ -9,7 +9,7 @@ const path = require("path");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
-app.use(express.static('public')); // pasta pública
+app.use(express.static('imagens')); // pasta pública que pode ser acessada pelo navegador
 
 // Configuração do MongoDB
 const url = "mongodb://localhost:27017";
@@ -69,7 +69,7 @@ app.get('/lista_pacientes', async (req, res) => {
         const collection = db.collection(collectionPacientes);
 
         const pacientes = await collection.find({}, {
-            projection: { nome: 1, idade: 1, data_nascimento: 1, RG: 1, telefone: 1, _id: 1 }
+            projection: { nome: 1, idade: 1, data_nascimento: 1, RG: 1, telefone: 1, _id: 1 , sobre:1 }
         }).toArray();
 
         res.json(pacientes);
@@ -257,7 +257,7 @@ app.post('/deletar-consulta', async (req,res)=>{
         await client.connect();
 
         const db = client.db(dbName);
-        const collection = db.collection(collectionConsultas); // ✅ coleção certa
+        const collection = db.collection(collectionConsultas); 
 
         const result = await collection.deleteOne({ _id: new ObjectId(id) });
 
@@ -283,7 +283,7 @@ app.get('/atualizar-pacientes', (req,res)=>{
 })
 
 app.post('/atualizar-pacientes', async (req,res)=>{
-    const { nome, idade, sexo, RG, telefone} = req.body
+    const { nome, idade, sexo, RG, telefone, } = req.body
 
     const client = new MongoClient(url)
 
