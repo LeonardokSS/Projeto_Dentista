@@ -1,77 +1,150 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Pacientes</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Pacientes</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2c7fb8;
+      --secondary-color: #7fcdbb;
+      --accent-color: #edf8b1;
+    }
+
+    body {
+      background: linear-gradient(135deg, black 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .main-card {
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: none;
+    }
+
+    .main-card .card-body {
+      padding: 2rem;
+    }
+
+    .page-title {
+      color: var(--primary-color);
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      border-radius: 50px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #1d5f8a;
+      border-color: #1d5f8a;
+      transform: scale(1.05);
+    }
+
+    .table thead {
+      background: var(--primary-color);
+      color: black;
+    }
+
+    .table tbody tr:hover {
+      background-color: rgba(44, 127, 184, 0.08);
+    }
+  </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h1 class="text-center mb-4">Lista Pacientes</h1>
-                        <div class="text-center mb-4">
-                            <a href="/cadastro-pacientes" class="btn btn-primary mb-2">Cadastrar Novo Paciente</a>
-                            <a href="/" class="btn btn-secondary mb-2 ms-2">Voltar para Home</a>
-                        </div>
-                        <h2 class="text-center">Lista de Pacientes</h2>
-                        <table class="table table-bordered text-center">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Idade</th>
-                                    <th>Data de nascimento</th>
-                                    <th>RG</th>
-                                    <th>Telefone</th>
-                                    <th>Sobre</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pacientes-tabela">
-                             
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="container mt-5">
+    <div class="card main-card">
+      <div class="card-body">
+        <h1 class="text-center page-title">Lista de Pacientes</h1>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', ()=>{
-            // CORREÇÃO: Mudei para a rota correta '/api/pacientes'
-            fetch('/lista_pacientes')
-                .then(response => response.json())
-                .then(pacientes => {
-                    const tabela = document.getElementById('pacientes-tabela')
-                    tabela.innerHTML = pacientes.map(paciente => `
-                        <tr>
-                            <td>${paciente.nome || 'N/A'}</td>
-                            <td>${paciente.idade || 'N/A'}</td>
-                            <td>${paciente.data_nascimento || 'N/A'}</td>
-                            <td>${paciente.RG || 'N/A'}</td>
-                            <td>${paciente.telefone || 'N/A'}</td>
-                            <td>${paciente.sobre || 'N/A'}</td>
-                            <td>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a href="/atualizar-pacientes?id=${paciente._id}" class="btn btn-warning">Atualizar</a>
-                                    <form action="/deletar-pacientes" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este paciente?')">
-                                        <input type="hidden" name="id" value="${paciente._id}">
-                                        <button type="submit" class="btn btn-danger">Deletar</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    `).join('');
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar pacientes: ', error)
-                })
+        <div class="text-center mb-4">
+          <a href="/cadastro-pacientes" class="btn btn-primary mr-2">Cadastrar Novo Paciente</a>
+          <a href="/" class="btn btn-secondary">Voltar Menu</a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-striped text-center align-middle">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Data de nascimento</th>
+                <th>RG</th>
+                <th>Telefone</th>
+                <th>Sobre</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="pacientes-tabela">
+              <tr>
+                <td colspan="7" class="text-muted text-center">
+                  Carregando pacientes...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      fetch('/lista_pacientes')
+        .then(response => response.json())
+        .then(pacientes => {
+          const tabela = document.getElementById('pacientes-tabela')
+          if (pacientes.length === 0) {
+            tabela.innerHTML = `
+              <tr>
+                <td colspan="7" class="text-muted">Nenhum paciente cadastrado.</td>
+              </tr>
+            `;
+            return;
+          }
+          tabela.innerHTML = pacientes.map(paciente => `
+            <tr>
+              <td>${paciente.nome || 'N/A'}</td>
+              <td>${paciente.idade || 'N/A'}</td>
+              <td>${paciente.data_nascimento || 'N/A'}</td>
+              <td>${paciente.RG || 'N/A'}</td>
+              <td>${paciente.telefone || 'N/A'}</td>
+              <td>${paciente.sobre || 'N/A'}</td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <a href="/atualizar-pacientes?id=${paciente._id}" class="btn btn-warning">Editar</a>
+                  <form action="/deletar-pacientes" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este paciente?')" style="display:inline;">
+                    <input type="hidden" name="id" value="${paciente._id}">
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          `).join('');
         })
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+        .catch(error => {
+          console.error('Erro ao carregar pacientes: ', error);
+          document.getElementById('pacientes-tabela').innerHTML = `
+            <tr>
+              <td colspan="7" class="text-danger">Erro ao carregar pacientes.</td>
+            </tr>
+          `;
+        })
+    })
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

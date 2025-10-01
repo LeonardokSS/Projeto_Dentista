@@ -32,7 +32,7 @@ app.get('/pacientes', (req, res) => {
 });
 
 app.get('/vendas', (req, res) => {
-    res.sendFile(__dirname + '/vendas.html');
+    res.sendFile(__dirname + '/consultas.html');
 });
 
 // ------------------- PACIENTES -------------------
@@ -283,7 +283,7 @@ app.get('/atualizar-pacientes', (req,res)=>{
 })
 
 app.post('/atualizar-pacientes', async (req,res)=>{
-    const { nome, idade, sexo, RG, telefone, } = req.body
+    const { nome, idade, data_nascimento, RG, telefone, sobre } = req.body
 
     const client = new MongoClient(url)
 
@@ -296,7 +296,7 @@ app.post('/atualizar-pacientes', async (req,res)=>{
         const result = await collection.updateOne(
             { nome: nome},
             { $set: {
-                idade, sexo, RG, telefone
+                idade,data_nascimento,RG,telefone,sobre
             }}
         )
         if (result.modifiedCount > 0){
@@ -315,7 +315,7 @@ app.post('/atualizar-pacientes', async (req,res)=>{
 })
 // ------------------- Consultas -------------------
 app.get('/cadastro-vendas', (req, res) => {
-    res.sendFile(__dirname + '/cadastro-vendas.html');
+    res.sendFile(__dirname + '/cadastro-consultas.html');
 });
 
 app.post('/cadastro-vendas', async (req, res) => {

@@ -1,68 +1,313 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <title>Atualizar Paciente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #2c7fb8;
+            --secondary-color: #7fcdbb;
+            --accent-color: #edf8b1;
+        }
+
+        body {
+            background: linear-gradient(135deg, black 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .main-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .main-card .card-body {
+            padding: 2rem;
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d5f8a;
+            border-color: #1d5f8a;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ced4da;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(44, 127, 184, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #1d5f8a;
+            transform: translateX(-5px);
+        }
+
+        .form-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid #ffffff;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-sm">
+            <div class="col-md-8 col-lg-6">
+                <a href="/lista-pacientes" class="back-link">
+                    <i class="bi bi-arrow-left me-2"></i> Voltar para Lista de Pacientes
+                </a>
+                <div class="card main-card">
                     <div class="card-body">
-                        <h1 class="card-title text-center">Atualizar Paciente</h1>
-                        <form action="/atualizar-pacientes" method="post">
-                            <div class="form-group">
-                                <label for="nome">Nome:</label>
-                                <input type="text" name="nome" id="nome" class="form-control" required>
+                        <h1 class="text-center page-title">
+                            <i class="bi bi-person-gear me-2"></i>Atualizar Paciente
+                        </h1>
+
+                        <!-- Alert para erros -->
+                        <div id="errorAlert" class="alert alert-danger d-none" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <span id="errorMessage">Erro ao carregar dados do paciente.</span>
+                        </div>
+                        
+                        <form id="updateForm" action="/atualizar-pacientes" method="post">
+                            <!-- ID oculto -->
+                            <input type="hidden" name="id" id="id">
+
+                            <!-- Dados Pessoais -->
+                            <div class="form-section">
+                                <h3 class="section-title">Dados Pessoais</h3>
+                                
+                                <!-- Nome -->
+                                <div class="form-group mb-3">
+                                    <label for="nome" class="form-label">Nome Completo:</label>
+                                    <input type="text" name="nome" id="nome" class="form-control" placeholder="Digite o nome completo" required>
+                                </div>
+
+                                <!-- Idade -->
+                                <div class="form-group mb-3">
+                                    <label for="idade" class="form-label">Idade:</label>
+                                    <input type="number" name="idade" id="idade" class="form-control" min="0" max="120" placeholder="Idade em anos" required>
+                                </div>
+
+                                <!-- Data de Nascimento -->
+                                <div class="form-group mb-3">
+                                    <label for="data_nascimento" class="form-label">Data de Nascimento:</label>
+                                    <input type="date" name="data_nascimento" id="data_nascimento" class="form-control" required>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="idade">Idade:</label>
-                                <input type="text" name="idade" id="idade" class="form-control" required>
+
+                            <!-- Documentos e Contato -->
+                            <div class="form-section">
+                                <h3 class="section-title">Documentos e Contato</h3>
+                                
+                                <!-- RG -->
+                                <div class="form-group mb-3">
+                                    <label for="RG" class="form-label">RG:</label>
+                                    <input type="text" name="RG" id="RG" class="form-control" placeholder="Número do RG" required>
+                                </div>
+
+                                <!-- Telefone -->
+                                <div class="form-group mb-3">
+                                    <label for="telefone" class="form-label">Telefone:</label>
+                                    <input type="tel" name="telefone" id="telefone" class="form-control" placeholder="(xx) xxxxx-xxxx" required>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="data_nascimento">Data de Nascimento:</label>
-                                <input type="text" name="data_nascimento" id="data_nascimento" class="form-control" required>
+
+                            <!-- Informações adicionais -->
+                            <div class="form-section">
+                                <h3 class="section-title">Informações Adicionais</h3>
+                                <div class="form-group mb-3">
+                                    <label for="sobre" class="form-label">Histórico Médico e Observações:</label>
+                                    <textarea name="sobre" id="sobre" class="form-control" rows="4" placeholder="Ex: histórico médico, alergias, observações importantes..."></textarea>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="RG">RG:</label>
-                                <input type="text" name="RG" id="RG" class="form-control" required>
+                            
+                            <!-- Botões -->
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                <a href="/lista-pacientes" class="btn btn-secondary me-md-2">
+                                    <i class="bi bi-x-circle me-2"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary" id="submitButton">
+                                    <div class="loading-spinner" id="loadingSpinner"></div>
+                                    <i class="bi bi-check-circle me-2"></i> Atualizar Paciente
+                                </button>
                             </div>
-                            <div class="form-group">
-                                <label for="telefone">Telefone:</label>
-                                <input type="text" name="telefone" id="telefone" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="sobre">Sobre:</label>
-                                <input type="text" name="sobre" id="sobre" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">Atualizar Paciente</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-<script>
-    document.addEventListener('DOMContentLoaded', ()=>{
-        const urlParams = new URLSearchParams(window.location.search)
-        const Id = urlParams.get('id')
 
-        if(livroId){
-            fetch(`/pacientes/${livroId}`).then(response=>response.json()).then(livro=>{
-                document.getElementById('id').value = _id
-                document.getElementById('nome').value = nome
-                document.getElementById('idade').value = idade
-                document.getElementById('data_nascimento').value = data_nascimento
-                document.getElementById('RG').value = RG
-                document.getElementById('telefone').value = telefone
-                document.getElementById('sobre').value = sobre
-            }).catch(error=>console.error('Erro ao carregar dados do paciente: ', error))
-        }  
-    })
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+            const submitButton = document.getElementById('submitButton');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            // Formatação do telefone
+            const telefoneInput = document.getElementById('telefone');
+            
+            telefoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length <= 10) {
+                    value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+                } else {
+                    value = value.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+                }
+                
+                e.target.value = value;
+            });
+
+            // Preenchimento automático da idade baseada na data de nascimento
+            const dataNascimentoInput = document.getElementById('data_nascimento');
+            const idadeInput = document.getElementById('idade');
+            
+            dataNascimentoInput.addEventListener('change', function() {
+                if (this.value) {
+                    const nascimento = new Date(this.value);
+                    const hoje = new Date();
+                    let idade = hoje.getFullYear() - nascimento.getFullYear();
+                    const mesAtual = hoje.getMonth();
+                    const mesNascimento = nascimento.getMonth();
+                    
+                    if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())) {
+                        idade--;
+                    }
+                    
+                    idadeInput.value = idade;
+                }
+            });
+
+            // Preencher o formulário com os dados do paciente
+            if (id) {
+                fetch(`/pacientes/${id}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Paciente não encontrado');
+                        }
+                        return response.json();
+                    })
+                    .then(paciente => {
+                        document.getElementById('id').value = paciente._id;
+                        document.getElementById('nome').value = paciente.nome || '';
+                        document.getElementById('idade').value = paciente.idade || '';
+                        document.getElementById('data_nascimento').value = paciente.data_nascimento || '';
+                        document.getElementById('RG').value = paciente.RG || '';
+                        document.getElementById('telefone').value = paciente.telefone || '';
+                        document.getElementById('sobre').value = paciente.sobre || '';
+                        
+                        // Esconder alerta de erro se existir
+                        errorAlert.classList.add('d-none');
+                    })
+                    .catch(error => {
+                        console.error('Erro ao carregar dados do paciente:', error);
+                        errorMessage.textContent = error.message || 'Erro ao carregar dados do paciente.';
+                        errorAlert.classList.remove('d-none');
+                    });
+            } else {
+                errorMessage.textContent = 'ID do paciente não fornecido.';
+                errorAlert.classList.remove('d-none');
+            }
+
+            // Feedback visual durante o envio do formulário
+            document.getElementById('updateForm').addEventListener('submit', function() {
+                submitButton.disabled = true;
+                loadingSpinner.style.display = 'inline-block';
+                submitButton.querySelector('i').style.display = 'none';
+            });
+        });
+    </script>
 </body>
 </html>
