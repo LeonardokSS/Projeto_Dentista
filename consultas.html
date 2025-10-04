@@ -5,101 +5,192 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de Consultas</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #2c7fb8;
-      --secondary-color: #7fcdbb;
-      --accent-color: #edf8b1;
+      --primary-color: #2196f3;
+      --secondary-color: #64b5f6;
+      --accent-color: #e3f2fd;
     }
 
     body {
-      background: linear-gradient(135deg, black 0%, #c3cfe2 100%);
-      min-height: 100vh;
+      background: linear-gradient(135deg, #0d1117 0%, #1b2735 100%);
+      color: #f5f5f5;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
     }
 
     .main-card {
-      border-radius: 15px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
       border: none;
+      background: #ffffff10;
+      backdrop-filter: blur(8px);
     }
 
     .main-card .card-body {
-      padding: 2rem;
+      padding: 2.5rem;
     }
 
     .page-title {
-      color: var(--primary-color);
-      font-weight: 700;
+      color: var(--accent-color);
+      font-weight: 800;
+      font-size: 2.2rem;
       margin-bottom: 2rem;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
     .btn-primary {
       background-color: var(--primary-color);
       border-color: var(--primary-color);
-      border-radius: 50px;
-      padding: 0.5rem 1.5rem;
+      border-radius: 40px;
+      padding: 0.8rem 2rem;
+      font-size: 1.1rem;
       font-weight: 600;
       transition: all 0.3s ease;
     }
 
     .btn-primary:hover {
-      background-color: #1d5f8a;
-      border-color: #1d5f8a;
+      background-color: #1976d2;
       transform: scale(1.05);
     }
 
     .btn-secondary {
-      border-radius: 50px;
-      padding: 0.5rem 1.5rem;
+      border-radius: 40px;
+      padding: 0.8rem 2rem;
+      font-size: 1.1rem;
       font-weight: 600;
+      background: transparent;
+      border: 2px solid var(--secondary-color);
+      color: var(--secondary-color);
       transition: all 0.3s ease;
     }
 
-    .table thead {
-      background: var(--primary-color);
-      color: black;
+    .btn-secondary:hover {
+      background-color: var(--secondary-color);
+      color: #000;
+      transform: scale(1.05);
     }
 
-    .table tbody tr:hover {
-      background-color: rgba(44, 127, 184, 0.08);
+    .consulta-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      height: 100%;
+      backdrop-filter: blur(5px);
+      position: relative;
+      overflow: hidden;
     }
 
-    .table-wrapper {
-      max-height: 500px;
-      overflow-y: auto;
+    .consulta-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     }
 
-    .table-wrapper::-webkit-scrollbar {
-      width: 8px;
+    .consulta-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.15);
     }
 
-    .table-wrapper::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 10px;
+    .consulta-card .card-body {
+      padding: 1.5rem;
     }
 
-    .table-wrapper::-webkit-scrollbar-thumb {
-      background: var(--primary-color);
-      border-radius: 10px;
+    .consulta-title {
+      color: var(--accent-color);
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 0.5rem;
     }
 
-    .btn-group .btn {
-      border-radius: 5px;
-      margin: 0 2px;
+    .consulta-info {
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .consulta-icon {
+      color: var(--secondary-color);
+      width: 24px;
+      margin-right: 0.5rem;
+      text-align: center;
+    }
+
+    .consulta-info-label {
+      font-weight: 600;
+      color: var(--secondary-color);
+      margin-right: 0.5rem;
+    }
+
+    .consulta-info-value {
+      color: #ffffff;
+    }
+
+    .consulta-actions {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 0.5rem;
     }
 
     .btn-warning {
-      background-color: #ffc107;
-      border-color: #ffc107;
+      background-color: #ffca28;
+      border-color: #ffca28;
+      color: #000;
+      font-weight: 600;
+      border-radius: 10px;
+      flex: 1;
     }
 
     .btn-danger {
-      background-color: #dc3545;
-      border-color: #dc3545;
+      background-color: #e53935;
+      border-color: #e53935;
+      font-weight: 600;
+      border-radius: 10px;
+      flex: 1;
+    }
+
+    .consulta-observacoes {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .observacoes-text {
+      color: #ffffff;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #cfcfcf;
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      color: var(--secondary-color);
+    }
+
+    @media (max-width: 768px) {
+      .main-card .card-body {
+        padding: 1.5rem;
+      }
+      
+      .consulta-card .card-body {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
@@ -111,92 +202,132 @@
 
         <div class="text-center mb-4">
           <a href="/cadastro-vendas" class="btn btn-primary me-2">
-            <i class="bi bi-pencil-square"></i> Registrar Nova Consulta
+            <i class="fas fa-pencil-alt"></i> Registrar Nova Consulta
           </a>
           <a href="/" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Voltar para o Início
+            <i class="fas fa-arrow-left"></i> Voltar para o Início
           </a>
         </div>
 
-        <div class="table-responsive table-wrapper">
-          <table class="table table-striped text-center align-middle">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Horário</th>
-                <th>Paciente</th>
-                <th>Observações</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="consultasTableBody">
-              <tr>
-                <td colspan="5" class="text-muted text-center">
-                  Carregando consultas...
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div id="consultas-cards" class="row">
+          <div class="col-12">
+            <div class="empty-state">
+              <i class="fas fa-stethoscope"></i>
+              <p>Carregando consultas...</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const consultasTableBody = document.getElementById('consultasTableBody');
-
-      fetch('/lista_consultas')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(consultas => {
-          consultasTableBody.innerHTML = '';
-
-          if (consultas.length === 0) {
-            consultasTableBody.innerHTML = `
-              <tr>
-                <td colspan="5" class="text-muted text-center">Nenhuma consulta registrada ainda.</td>
-              </tr>
-            `;
-            return;
-          }
-
-          consultasTableBody.innerHTML = consultas.map(consulta => `
-            <tr>
-              <td>${consulta.data || 'N/A'}</td>
-              <td>${consulta.horario || 'N/A'}</td>
-              <td>${consulta.paciente_nome || 'N/A'}</td>
-              <td>${consulta.observacoes || '-'}</td>
-              <td>
-                <div class="btn-group btn-group-sm">
-                  <a href="/atualizar-consulta?id=${consulta._id}" class="btn btn-warning">
-                    <i class="bi bi-pencil-square">Atualizar</i>
-                  </a>
-                  <form action="/deletar-consulta" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar esta consulta?');" style="display:inline;">
-                    <input type="hidden" name="id" value="${consulta._id}">
-                    <button type="submit" class="btn btn-danger">
-                      <i class="bi bi-trash">Deletar</i>
-                    </button>
-                  </form>
-                </div>
-              </td>
-            </tr>
-          `).join('');
-        })
-        .catch(error => {
-          console.error('Erro ao carregar consultas:', error);
-          consultasTableBody.innerHTML = `
-            <tr>
-              <td colspan="5" class="text-danger text-center">Erro ao carregar consultas. ${error.message}</td>
-            </tr>
-          `;
-        });
+      carregarConsultas();
     });
+
+    async function carregarConsultas() {
+      const container = document.getElementById('consultas-cards');
+
+      try {
+        const response = await fetch('/lista_consultas');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const consultas = await response.json();
+        renderizarConsultas(consultas);
+
+      } catch (error) {
+        console.error('Erro ao carregar consultas:', error);
+        container.innerHTML = `
+          <div class="col-12">
+            <div class="empty-state">
+              <i class="fas fa-exclamation-triangle"></i>
+              <p>Erro ao carregar consultas.</p>
+              <small>${error.message}</small>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function renderizarConsultas(consultas) {
+      const container = document.getElementById('consultas-cards');
+      
+      if (consultas.length === 0) {
+        container.innerHTML = `
+          <div class="col-12">
+            <div class="empty-state">
+              <i class="fas fa-calendar-times"></i>
+              <p>Nenhuma consulta registrada ainda.</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const cardsHTML = consultas.map(consulta => {        
+        return `
+        <div class="col-lg-4 col-md-6 mb-4">
+  <div class="card consulta-card h-100">
+    <div class="card-body">
+      <h5 class="consulta-title">${consulta.tipo_consulta || 'N/A'}</h5>
+      
+      <div class="consulta-info">
+        <div class="consulta-icon"><i class="bi bi-person"></i></div>
+        <div>
+          <span class="consulta-info-label">Paciente:</span> 
+          <span class="consulta-info-value"><i class="bi bi-person me-2"></i>${consulta.paciente_nome || 'N/A'}</span>
+        </div>
+      </div>
+              
+              <div class="consulta-info">
+                <div class="consulta-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div>
+                  <span class="consulta-info-label">Data:</span> 
+                  <span class="consulta-info-value">${consulta.data || 'N/A'}</span>
+                </div>
+              </div>
+              
+              <div class="consulta-info">
+                <div class="consulta-icon"><i class="fas fa-clock"></i></div>
+                <div>
+                  <span class="consulta-info-label">Horário:</span> 
+                  <span class="consulta-info-value">${consulta.horario || 'N/A'}</span>
+                </div>
+              </div>
+              
+              ${consulta.observacoes && consulta.observacoes !== '-' ? `
+              <div class="consulta-observacoes">
+                <div class="consulta-info-label"><i class="fas fa-clipboard-list me-1"></i>Observações:</div>
+                <div class="mt-1 observacoes-text">${consulta.observacoes}</div>
+              </div>
+              ` : ''}
+              
+              <div class="consulta-actions">
+                <a href="/atualizar-consulta?id=${consulta._id}" class="btn btn-warning btn-sm">
+                  <i class="fas fa-edit me-1"></i>Atualizar
+                </a>
+                
+                <form action="/deletar-consulta" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar esta consulta?');" style="display:inline; flex:1;">
+                  <input type="hidden" name="id" value="${consulta._id}">
+                  <button type="submit" class="btn btn-danger btn-sm w-100">
+                    <i class="fas fa-trash me-1"></i>Deletar
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        `;
+      }).join('');
+
+      container.innerHTML = cardsHTML;
+    }
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

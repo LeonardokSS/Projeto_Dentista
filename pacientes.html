@@ -3,61 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lista de Pacientes</title>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <title>Lista de Pacientes em Cards</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     :root {
-      --primary-color: #2c7fb8;
-      --secondary-color: #7fcdbb;
-      --accent-color: #edf8b1;
+      --primary-color: #2196f3;
+      --secondary-color: #64b5f6;
+      --accent-color: #ffffff;
     }
 
     body {
-      background: linear-gradient(135deg, black 0%, #c3cfe2 100%);
-      min-height: 100vh;
+      background: linear-gradient(135deg, #0d1117 0%, #1b2735 100%);
+      color: #f5f5f5;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
     }
 
     .main-card {
-      border-radius: 15px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
       border: none;
+      background: #ffffff10;
+      backdrop-filter: blur(8px);
     }
 
     .main-card .card-body {
-      padding: 2rem;
+      padding: 2.5rem;
     }
 
     .page-title {
-      color: var(--primary-color);
-      font-weight: 700;
+      color: var(--accent-color);
+      font-weight: 800;
+      font-size: 2.2rem;
       margin-bottom: 2rem;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
     }
 
     .btn-primary {
       background-color: var(--primary-color);
       border-color: var(--primary-color);
-      border-radius: 50px;
-      padding: 0.5rem 1.5rem;
+      border-radius: 40px;
+      padding: 0.8rem 2rem;
+      font-size: 1.1rem;
       font-weight: 600;
       transition: all 0.3s ease;
+      color: white;
     }
 
     .btn-primary:hover {
-      background-color: #1d5f8a;
-      border-color: #1d5f8a;
+      background-color: #1976d2;
       transform: scale(1.05);
     }
 
-    .table thead {
-      background: var(--primary-color);
-      color: black;
+    .btn-secondary {
+      border-radius: 40px;
+      padding: 0.8rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: transparent;
+      border: 2px solid var(--secondary-color);
+      color: var(--secondary-color);
+      transition: all 0.3s ease;
     }
 
-    .table tbody tr:hover {
-      background-color: rgba(44, 127, 184, 0.08);
+    .btn-secondary:hover {
+      background-color: var(--secondary-color);
+      color: #000;
+      transform: scale(1.05);
+    }
+
+    /* Cards dos pacientes */
+    .patient-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      height: 100%;
+      backdrop-filter: blur(5px);
+    }
+
+    .patient-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .patient-card .card-body {
+      padding: 1.5rem;
+    }
+
+    .patient-name {
+      color: #ffffff; /* nome do paciente em branco puro */
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 0.5rem;
+    }
+
+    .patient-info {
+      margin-bottom: 0.8rem;
+      color: #ffffff; /* informações do paciente em branco */
+    }
+
+    .patient-info-label {
+      font-weight: 600;
+      color: var(--secondary-color); /* rótulo azul claro */
+    }
+
+    .patient-actions {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-warning {
+      background-color: #ffca28;
+      border-color: #ffca28;
+      color: #000;
+      font-weight: 600;
+      border-radius: 10px;
+      flex: 1;
+    }
+
+    .btn-danger {
+      background-color: #e53935;
+      border-color: #e53935;
+      font-weight: 600;
+      border-radius: 10px;
+      flex: 1;
+    }
+
+    @media (max-width: 768px) {
+      .main-card .card-body {
+        padding: 1.5rem;
+      }
+      .patient-card .card-body {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
@@ -68,83 +153,66 @@
         <h1 class="text-center page-title">Lista de Pacientes</h1>
 
         <div class="text-center mb-4">
-          <a href="/cadastro-pacientes" class="btn btn-primary mr-2">Cadastrar Novo Paciente</a>
-          <a href="/" class="btn btn-secondary">Voltar Menu</a>
+          <a href="/cadastro-pacientes" class="btn btn-primary me-2">Cadastrar Novo Paciente</a>
+          <a href="/" class="btn btn-secondary">Voltar ao Menu</a>
         </div>
 
-        <div class="table-responsive">
-          <table class="table table-striped text-center align-middle">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Idade</th>
-                <th>Data de nascimento</th>
-                <th>RG</th>
-                <th>Telefone</th>
-                <th>Sobre</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="pacientes-tabela">
-              <tr>
-                <td colspan="7" class="text-muted text-center">
-                  Carregando pacientes...
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="row" id="pacientes-lista">
+          <div class="col-12 text-center text-muted">Carregando pacientes...</div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', ()=>{
+    document.addEventListener('DOMContentLoaded', () => {
       fetch('/lista_pacientes')
         .then(response => response.json())
         .then(pacientes => {
-          const tabela = document.getElementById('pacientes-tabela')
+          const lista = document.getElementById('pacientes-lista');
+
           if (pacientes.length === 0) {
-            tabela.innerHTML = `
-              <tr>
-                <td colspan="7" class="text-muted">Nenhum paciente cadastrado.</td>
-              </tr>
+            lista.innerHTML = `
+              <div class="col-12 text-center text-muted">
+                Nenhum paciente cadastrado.
+              </div>
             `;
             return;
           }
-          tabela.innerHTML = pacientes.map(paciente => `
-            <tr>
-              <td>${paciente.nome || 'N/A'}</td>
-              <td>${paciente.idade || 'N/A'}</td>
-              <td>${paciente.data_nascimento || 'N/A'}</td>
-              <td>${paciente.RG || 'N/A'}</td>
-              <td>${paciente.telefone || 'N/A'}</td>
-              <td>${paciente.sobre || 'N/A'}</td>
-              <td>
-                <div class="btn-group btn-group-sm">
-                  <a href="/atualizar-pacientes?id=${paciente._id}" class="btn btn-warning">Editar</a>
-                  <form action="/deletar-pacientes" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este paciente?')" style="display:inline;">
-                    <input type="hidden" name="id" value="${paciente._id}">
-                    <button type="submit" class="btn btn-danger">Excluir</button>
-                  </form>
+
+          lista.innerHTML = pacientes.map(paciente => `
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card patient-card h-100">
+                <div class="card-body">
+                  <h5 class="patient-name">${paciente.nome || 'N/A'}</h5>
+                  <div class="patient-info"><span class="patient-info-label">Idade:</span> ${paciente.idade || 'N/A'}</div>
+                  <div class="patient-info"><span class="patient-info-label">Nascimento:</span> ${paciente.data_nascimento || 'N/A'}</div>
+                  <div class="patient-info"><span class="patient-info-label">RG:</span> ${paciente.RG || 'N/A'}</div>
+                  <div class="patient-info"><span class="patient-info-label">Telefone:</span> ${paciente.telefone || 'N/A'}</div>
+                  <div class="patient-info"><span class="patient-info-label">Sobre:</span> <div class="mt-1">${paciente.sobre || 'N/A'}</div></div>
+                  <div class="patient-actions">
+                    <a href="/atualizar-pacientes?id=${paciente._id}" class="btn btn-warning btn-sm">Editar</a>
+                    <form action="/deletar-pacientes" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este paciente?')" style="display:inline;">
+                      <input type="hidden" name="id" value="${paciente._id}">
+                      <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                    </form>
+                  </div>
                 </div>
-              </td>
-            </tr>
+              </div>
+            </div>
           `).join('');
         })
         .catch(error => {
           console.error('Erro ao carregar pacientes: ', error);
-          document.getElementById('pacientes-tabela').innerHTML = `
-            <tr>
-              <td colspan="7" class="text-danger">Erro ao carregar pacientes.</td>
-            </tr>
+          document.getElementById('pacientes-lista').innerHTML = `
+            <div class="col-12 text-center text-danger">
+              Erro ao carregar pacientes.
+            </div>
           `;
-        })
-    })
+        });
+    });
   </script>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

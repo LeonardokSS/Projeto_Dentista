@@ -162,6 +162,7 @@ app.get('/lista_consultas', async (req, res) => {
 
                 return {
                     _id: consulta._id,
+                    tipo_consulta : consulta.tipo_consulta || "N/A",
                     data: consulta.data || consulta.data_compra || "N/A", // cobre caso tenha outro nome
                     horario: consulta.horario || consulta.quantidade || "N/A",
                     paciente_nome: pacienteNome,
