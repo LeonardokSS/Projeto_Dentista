@@ -198,7 +198,7 @@
   <div class="container mt-5">
     <div class="card main-card">
       <div class="card-body">
-        <h1 class="text-center page-title">Registro de Consultas</h1>
+        <h1 class="text-center page-title">Consultas</h1>
 
         <div class="text-center mb-4">
           <a href="/cadastro-vendas" class="btn btn-primary me-2">
@@ -275,13 +275,16 @@
     <div class="card-body">
       <h5 class="consulta-title">${consulta.tipo_consulta || 'N/A'}</h5>
       
-      <div class="consulta-info">
-        <div class="consulta-icon"><i class="bi bi-person"></i></div>
-        <div>
-          <span class="consulta-info-label">Paciente:</span> 
-          <span class="consulta-info-value"><i class="bi bi-person me-2"></i>${consulta.paciente_nome || 'N/A'}</span>
-        </div>
+        <div class="consulta-info">
+        <div class="consulta-icon"><i class="fas fa-user"></i></div>
+          <div>
+            <span class="consulta-info-label">Paciente:</span> 
+              <span class="consulta-info-value">
+                 <i class=""></i>${consulta.paciente_nome || 'N/A'}
+            </span>
+          </div>
       </div>
+
               
               <div class="consulta-info">
                 <div class="consulta-icon"><i class="fas fa-calendar-alt"></i></div>

@@ -75,7 +75,7 @@
 <body>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-md-8">
+      <div class="col-md-10 col-lg-10">
         <div class="card main-card">
           <div class="card-body">
             <h1 class="page-title">Cadastro de Consultas</h1>
@@ -97,23 +97,31 @@
               </div>
 
 
-              <!-- Data -->
-              <div class="form-group mb-4">
-                <label for="data_compra" class="form-label">Data da Consulta:</label>
-                <input type="date" name="data_compra" id="data_compra" class="form-control" required>
-              </div>
+            <!-- Data -->
+                <div class="form-group mb-4">
+                  <label for="data" class="form-label">Data da Consulta:</label>
+                  <input type="date" name="data" id="data" class="form-control" required>
+                </div>
 
-              <!-- Horário -->
-              <div class="form-group mb-4">
-                <label for="quantidade" class="form-label">Horário:</label>
-                <input type="time" name="quantidade" id="quantidade" class="form-control" required>
-              </div>
+<!-- Horário -->
+                  <div class="form-group mb-4">
+                    <label for="horario" class="form-label">Horário:</label>
+                    <select name="horario" id="horario" class="form-select" required>
+                    <option value="">Selecione um horário</option>
+                    </select>
+                  </div>
 
               <!-- Observações -->
-              <div class="form-group mb-4">
-                <label for="observacoes" class="form-label">Observações (opcional):</label>
-                <input type="text" name="observacoes" id="observacoes" class="form-control">
+             <div class="form-group mb-4 clo">
+              <label for="observacoes" class="form-label">Observações (opcional):</label>
+              <textarea
+                name="observacoes" 
+                id="observacoes" 
+                class="form-control" 
+                rows="4" 
+                placeholder="Digite suas observações aqui..."></textarea>
               </div>
+
 
               <!-- Botão -->
               <button type="submit" class="btn btn-primary">Cadastrar Consulta</button>
@@ -126,20 +134,38 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Carregar pacientes
-      fetch('/lista_pacientes')
-        .then(response => response.json())
-        .then(pacientes => {
-          const select = document.getElementById('paciente_id');
-          pacientes.forEach(paciente => {
-            const option = document.createElement('option');
-            option.value = paciente._id;
-            option.textContent = `${paciente.nome} - ${paciente.idade} anos`;
-            select.appendChild(option);
-          });
-        })
-        .catch(error => console.error('Erro ao carregar pacientes:', error));
-    });
+ 
+  const selectHora = document.getElementById('horario');
+  const startHour = 7;
+  const endHour = 19;
+
+  for (let h = startHour; h <= endHour; h++) {
+    for (let m = 0; m < 60; m += 30) {
+      const hora = h.toString().padStart(2, '0');
+      const minuto = m.toString().padStart(2, '0');
+      const time = `${hora}:${minuto}`;
+      const option = document.createElement('option');
+      option.value = time;
+      option.textContent = time;
+      selectHora.appendChild(option);
+    }
+  }
+
+
+  fetch('/lista_pacientes')
+    .then(response => response.json())
+    .then(pacientes => {
+      const select = document.getElementById('paciente_id');
+      pacientes.forEach(paciente => {
+        const option = document.createElement('option');
+        option.value = paciente._id;
+        option.textContent = `${paciente.nome} - ${paciente.idade} anos`;
+        select.appendChild(option);
+      });
+    })
+    .catch(error => console.error('Erro ao carregar pacientes:', error));
+});
+
   </script>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -72,6 +72,8 @@ app.get('/lista_pacientes', async (req, res) => {
             projection: { nome: 1, idade: 1, data_nascimento: 1, RG: 1, telefone: 1, _id: 1 , sobre:1 }
         }).toArray();
 
+    
+
         res.json(pacientes);
     } catch (err) {
         console.error('Erro ao buscar pacientes: ', err);
@@ -108,13 +110,29 @@ app.get('/cadastro-consultas', (req, res) => {
 });
 
 app.post('/cadastro-consultas', async (req, res) => {
-    const novaConsulta = req.body;
+    const { paciente_id, data, horario, tipo_consulta, observacoes } = req.body;
     const client = new MongoClient(url);
 
     try {
         await client.connect();
         const db = client.db(dbName);
         const collection = db.collection(collectionConsultas);
+
+        const consultaExistente = await collection.findOne({
+            data: data,
+            horario: horario
+        });
+
+        if (consultaExistente) {
+            return res.status(400).send(`
+                <h3 style="font-family:sans-serif; color:red; text-align:center; margin-top:30px;">
+                    ⚠️ Já existe uma consulta marcada nesse horário (${horario}) no dia ${data}.
+                </h3>
+                <p style="text-align:center;"><a href="/cadastro-consultas">Voltar</a></p>
+            `);
+        }
+
+        const novaConsulta = { paciente_id, data, horario, tipo_consulta, observacoes };
 
         const result = await collection.insertOne(novaConsulta);
         console.log(`Consulta cadastrada com sucesso. ID: ${result.insertedId}`);
@@ -163,8 +181,8 @@ app.get('/lista_consultas', async (req, res) => {
                 return {
                     _id: consulta._id,
                     tipo_consulta : consulta.tipo_consulta || "N/A",
-                    data: consulta.data || consulta.data_compra || "N/A", // cobre caso tenha outro nome
-                    horario: consulta.horario || consulta.quantidade || "N/A",
+                    data: consulta.data || consulta.data || "N/A", 
+                    horario: consulta.horario || consulta.horario || "N/A",
                     paciente_nome: pacienteNome,
                     observacoes: consulta.observacoes || "-"
                 };
@@ -180,12 +198,12 @@ app.get('/lista_consultas', async (req, res) => {
     }
 });
 
-// Página HTML para atualizar consulta
+// Atualizar consulta (get)
 app.get('/atualizar-consulta', (req, res) => {
     res.sendFile(__dirname + '/atualizar-consultas.html');
 });
 
-// Rota para atualizar consulta no banco
+// Atualizar consulta (post)
 app.post('/atualizar-consulta', async (req, res) => {
     const { id, data, horario, paciente_id, observacoes } = req.body;
 
@@ -223,7 +241,7 @@ app.post('/atualizar-consulta', async (req, res) => {
     }
 });
 
-
+// Deletar paciente
 app.post('/deletar-pacientes', async (req, res) => {
     const { id } = req.body;
 
@@ -250,6 +268,8 @@ app.post('/deletar-pacientes', async (req, res) => {
         client.close();
     }
 });
+
+// Atualizar consulta
 app.post('/deletar-consulta', async (req,res)=>{
     const { id } = req.body;
 
@@ -278,11 +298,13 @@ app.post('/deletar-consulta', async (req,res)=>{
 });
 
 
-
+// Atualizar pacientes (get)
 app.get('/atualizar-pacientes', (req,res)=>{
     res.sendFile(__dirname + '/atualizar-pacientes.html')
 })
 
+
+// Atualizar pacientes (post)
 app.post('/atualizar-pacientes', async (req,res)=>{
     const { nome, idade, data_nascimento, RG, telefone, sobre } = req.body
 
@@ -315,6 +337,9 @@ app.post('/atualizar-pacientes', async (req,res)=>{
     }
 })
 // ------------------- Consultas -------------------
+
+
+
 app.get('/cadastro-vendas', (req, res) => {
     res.sendFile(__dirname + '/cadastro-consultas.html');
 });
