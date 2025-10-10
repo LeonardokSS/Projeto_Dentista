@@ -285,60 +285,19 @@
         <div class="card main-card">
           <div class="card-body">
             <h1 class="text-center page-title">Sistema Odontológico</h1>
-            
-            <!-- Calendário de Consultas -->
-            <div class="calendar-card">
-  <div class="calendar-header">
-    <h2 class="calendar-title"><i class="far fa-calendar-alt me-2"></i>Próximas Consultas</h2>
-  </div>
-  <div class="calendar-body">
-    <div class="calendar-date" id="currentDate"></div>
-    <div class="calendar-day" id="currentDay"></div>
-    
-    <div class="consultation-list" id="consultationList">
-      <!-- Consultas do dia serão carregadas aqui -->
-    </div>
-  </div>
-</div>
-
-                
-                <div class="consultation-list" id="consultationList">
-                  <!-- Consultas serão carregadas aqui -->
-                  <div class="consultation-item">
-                    <div>
-                      <span class="consultation-time">09:00</span>
-                      <span class="consultation-patient">Maria Silva</span>
-                    </div>
-                    <div class="text-muted small">Limpeza dental</div>
-                  </div>
-                  
-                  <div class="consultation-item">
-                    <div>
-                      <span class="consultation-time">11:30</span>
-                      <span class="consultation-patient">João Santos</span>
-                    </div>
-                    <div class="text-muted small">Consulta de rotina</div>
-                  </div>
-                  
-                  <div class="consultation-item">
-                    <div>
-                      <span class="consultation-time">14:15</span>
-                      <span class="consultation-patient">Ana Oliveira</span>
-                    </div>
-                    <div class="text-muted small">Restauração</div>
-                  </div>
-                  
-                  <div class="consultation-item">
-                    <div>
-                      <span class="consultation-time">16:45</span>
-                      <span class="consultation-patient">Pedro Costa</span>
-                    </div>
-                    <div class="text-muted small">Extração</div>
-                  </div>
-                </div>
+         
+               <!-- ✅ CALENDÁRIO CORRIGIDO E FUNCIONAL -->
+            <div class="calendar-card mb-4">
+              <div class="calendar-header">
+                <h3 class="calendar-title">Consultas de Hoje</h3>
+              </div>
+              <div class="calendar-body">
+                <div class="calendar-date" id="currentDate"></div>
+                <div class="calendar-day" id="currentDay"></div>
+                <div class="consultation-list" id="consultationList"></div>
               </div>
             </div>
-            
+
             <main>
               <div class="row text-center justify-content-center">
                 <!-- Card Pacientes -->
@@ -400,112 +359,66 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   
-  <script>
-    
-    
-document.addEventListener('DOMContentLoaded', () => {
-  fetch('/lista_consultas')
-    .then(response => response.json())
-    .then(consultas => {
-      const hoje = new Date();
-      const hojeISO = hoje.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+ <script>
+document.addEventListener('DOMContentLoaded', async function() {
+  // Atualiza data e dia da semana
+  const now = new Date();
+  const formattedDate = now.toLocaleDateString('pt-BR', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
 
-      // Atualiza data e dia no calendário
-      const diaSemana = hoje.toLocaleDateString('pt-BR', { weekday: 'long' });
-      const mesAno = hoje.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-      document.getElementById('currentDate').textContent = hoje.getDate();
-      document.getElementById('currentDay').textContent = `${diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1)}, ${mesAno}`;
+  document.getElementById('currentDate').textContent = now.getDate();
+  document.getElementById('currentDay').textContent = formattedDate;
 
-      // Filtra consultas do dia
-      const consultasHoje = consultas.filter(c => c.data === hojeISO);
+  // Animação dos cards
+  const cards = document.querySelectorAll('.feature-card');
+  cards.forEach((card, index) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+      card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, 300 + (index * 200));
+  });
 
-      const listaConsultas = document.getElementById('consultationList');
-      if (consultasHoje.length === 0) {
-        listaConsultas.innerHTML = `
-          <div class="text-center text-muted">
-            Nenhuma consulta marcada para hoje.
-          </div>
-        `;
-      } else {
-        listaConsultas.innerHTML = consultasHoje.map(c => `
-          <div class="consultation-item">
-            <div>
-              <span class="consultation-time">${c.horario}</span>
-              <span class="consultation-patient">${c.paciente_nome}</span>
-            </div>
-            <div class="text-muted small">${c.tipo_consulta}</div>
-          </div>
-        `).join('');
-      }
-    })
-    .catch(error => {
-      console.error('Erro ao carregar consultas:', error);
-      document.getElementById('consultationList').innerHTML = `
-        <div class="text-center text-danger">
-          Erro ao carregar consultas.
-        </div>
-      `;
-    });
-});
+  // --- Atualiza a lista de consultas ---
+  async function atualizarConsultas() {
+  const dataAtualISO = new Date().toISOString().split('T')[0]; // ex: "2025-10-10"
+  const lista = document.getElementById('consultationList');
 
+  try {
+    const response = await fetch('/lista_consultas');
+    const consultas = await response.json();
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const now = new Date();
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      const formattedDate = now.toLocaleDateString('pt-BR', options);
-      
-      document.getElementById('currentDate').textContent = now.getDate();
-      document.getElementById('currentDay').textContent = formattedDate;
-      
-      // Efeito adicional de animação ao carregar a página
-      const cards = document.querySelectorAll('.feature-card');
-      
-      cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-          card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        }, 300 + (index * 200));
-      });
-      
-      // Simulação de carregamento de consultas da API
-      loadConsultations();
-    });
-    
-    // Função para carregar consultas (simulação)
-    function loadConsultations() {
-      // Em um cenário real, você faria uma requisição para sua API
-      // fetch('/api/consultas-proximas')
-      //   .then(response => response.json())
-      //   .then(data => renderConsultations(data))
-      //   .catch(error => console.error('Erro ao carregar consultas:', error));
-      
-      // Por enquanto, vamos usar os dados estáticos já no HTML
-      console.log('Consultas carregadas com sucesso!');
-    }
-    
-    // Função para renderizar as consultas
-    function renderConsultations(consultations) {
-      const consultationList = document.getElementById('consultationList');
-      
-      if (consultations.length === 0) {
-        consultationList.innerHTML = '<div class="no-consultations">Nenhuma consulta agendada para hoje</div>';
-        return;
-      }
-      
-      consultationList.innerHTML = consultations.map(consulta => `
-        <div class="consultation-item">
-          <div>
-            <span class="consultation-time">${consulta.horario}</span>
-            <span class="consultation-patient">${consulta.paciente}</span>
-          </div>
-          <div class="text-muted small">${consulta.procedimento}</div>
+    console.log("✅ Consultas recebidas:", consultas); // DEBUG
+
+    // Filtra consultas do dia atual
+    const consultasHoje = consultas.filter(c => c.data === dataAtualISO);
+
+    // Ordena por horário decrescente
+    consultasHoje.sort((a, b) => b.horario.localeCompare(a.horario));
+
+    if (consultasHoje.length === 0) {
+      lista.innerHTML = `<div class="no-consultations">Nenhuma consulta marcada para hoje.</div>`;
+    } else {
+      lista.innerHTML = consultasHoje.map(c => `
+        <div class="consultation-item p-2 border-bottom">
+          <div class="fw-bold">${c.horario} - ${c.paciente_nome || 'Sem nome'}</div>
+          <div class="small text-secondary">${c.tipo_consulta || ''}</div>
         </div>
       `).join('');
     }
-  </script>
+  } catch (erro) {
+    console.error("❌ Erro ao carregar consultas:", erro);
+    lista.innerHTML = `<div class="text-danger">Erro ao carregar as consultas.</div>`;
+  }
+}
+
+
+  atualizarConsultas();
+});
+</script>
+
 </body>
 </html>
