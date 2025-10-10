@@ -34,6 +34,14 @@ app.get('/pacientes', (req, res) => {
 app.get('/vendas', (req, res) => {
     res.sendFile(__dirname + '/consultas.html');
 });
+// ------------------- Caledário -------------------
+
+
+app.get('/caledario',(req,res) =>{
+    
+})
+
+
 
 // ------------------- PACIENTES -------------------
 app.get('/cadastro-pacientes', (req, res) => {

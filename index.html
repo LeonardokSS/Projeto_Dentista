@@ -288,12 +288,19 @@
             
             <!-- Calendário de Consultas -->
             <div class="calendar-card">
-              <div class="calendar-header">
-                <h2 class="calendar-title"><i class="far fa-calendar-alt me-2"></i>Próximas Consultas</h2>
-              </div>
-              <div class="calendar-body">
-                <div class="calendar-date" id="currentDate">17</div>
-                <div class="calendar-day" id="currentDay">Quinta-feira, Outubro 2023</div>
+  <div class="calendar-header">
+    <h2 class="calendar-title"><i class="far fa-calendar-alt me-2"></i>Próximas Consultas</h2>
+  </div>
+  <div class="calendar-body">
+    <div class="calendar-date" id="currentDate"></div>
+    <div class="calendar-day" id="currentDay"></div>
+    
+    <div class="consultation-list" id="consultationList">
+      <!-- Consultas do dia serão carregadas aqui -->
+    </div>
+  </div>
+</div>
+
                 
                 <div class="consultation-list" id="consultationList">
                   <!-- Consultas serão carregadas aqui -->
@@ -394,7 +401,54 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   
   <script>
-    // Atualizar data atual
+    
+    
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('/lista_consultas')
+    .then(response => response.json())
+    .then(consultas => {
+      const hoje = new Date();
+      const hojeISO = hoje.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+      // Atualiza data e dia no calendário
+      const diaSemana = hoje.toLocaleDateString('pt-BR', { weekday: 'long' });
+      const mesAno = hoje.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+      document.getElementById('currentDate').textContent = hoje.getDate();
+      document.getElementById('currentDay').textContent = `${diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1)}, ${mesAno}`;
+
+      // Filtra consultas do dia
+      const consultasHoje = consultas.filter(c => c.data === hojeISO);
+
+      const listaConsultas = document.getElementById('consultationList');
+      if (consultasHoje.length === 0) {
+        listaConsultas.innerHTML = `
+          <div class="text-center text-muted">
+            Nenhuma consulta marcada para hoje.
+          </div>
+        `;
+      } else {
+        listaConsultas.innerHTML = consultasHoje.map(c => `
+          <div class="consultation-item">
+            <div>
+              <span class="consultation-time">${c.horario}</span>
+              <span class="consultation-patient">${c.paciente_nome}</span>
+            </div>
+            <div class="text-muted small">${c.tipo_consulta}</div>
+          </div>
+        `).join('');
+      }
+    })
+    .catch(error => {
+      console.error('Erro ao carregar consultas:', error);
+      document.getElementById('consultationList').innerHTML = `
+        <div class="text-center text-danger">
+          Erro ao carregar consultas.
+        </div>
+      `;
+    });
+});
+
+
     document.addEventListener('DOMContentLoaded', function() {
       const now = new Date();
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
