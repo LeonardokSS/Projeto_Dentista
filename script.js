@@ -2,7 +2,11 @@ const express = require('express');
 const session = require('express-session');
 const { MongoClient, ObjectId } = require('mongodb');
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
 const methodOverride = require('method-override');
 const path = require("path");
 
@@ -404,8 +408,4 @@ app.get('/lista_vendas', verificarLogin, async (req, res) => {
     } finally {
         client.close();
     }
-});
-
-app.listen(port, () => {
-    console.log(`Servidor rodando em: http://localhost:${port}`);
 });
