@@ -1,54 +1,85 @@
 const express = require('express');
+const session = require('express-session');
 const { MongoClient, ObjectId } = require('mongodb');
 const app = express();
 const port = 3000;
 const methodOverride = require('method-override');
 const path = require("path");
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
-app.use(express.static('imagens')); // pasta pública que pode ser acessada pelo navegador
+app.use(express.static('imagens'));
 
-// Configuração do MongoDB
-const url = "mongodb://localhost:27017";
+app.use(session({
+    secret: 'meu_segredo_simples_' + Math.random().toString(36).substring(2),
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, httpOnly: true }
+}));
+
+function verificarLogin(req, res, next) {
+    if (req.session && req.session.logado) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+}
+
+const url = "mongodb+srv://admin:Fiapj9cpD@cluster0.am3lpwp.mongodb.net/consultorio?retryWrites=true&w=majority&appName=Cluster0";
 const dbName = 'consultorio';
 const collectionPacientes = 'pacientes';
 const collectionConsultas = 'consultas';
 const collectionVendas = 'vendas';
 
-// Rotas principais
-app.get('/', (req, res) => {
+// Variaveis para o deploy
+
+
+app.get('/login', (req, res) => {
+    res.sendFile(__dirname + '/login.html');
+});
+
+app.post('/login', (req, res) => {
+    const { usuario, senha } = req.body;
+    
+    if (usuario === 'admin' && senha === 'admin') {
+        req.session.logado = true;
+        res.redirect('/');
+    } else {
+        res.redirect('/login?erro=1');
+    }
+});
+
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/login');
+});
+
+app.get('/', verificarLogin, (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/consultas', (req, res) => {
+app.get('/consultas', verificarLogin, (req, res) => {
     res.sendFile(__dirname + '/cadastro-consultas.html');
 });
 
-app.get('/pacientes', (req, res) => {
+app.get('/pacientes', verificarLogin, (req, res) => {
     res.sendFile(__dirname + '/pacientes.html');
 });
 
-app.get('/vendas', (req, res) => {
+app.get('/vendas', verificarLogin, (req, res) => {
     res.sendFile(__dirname + '/consultas.html');
 });
-// ------------------- Caledário -------------------
 
-
-app.get('/caledario',(req,res) =>{
+app.get('/caledario', verificarLogin, (req, res) => {
     
-})
+});
 
-
-
-// ------------------- PACIENTES -------------------
-app.get('/cadastro-pacientes', (req, res) => {
+app.get('/cadastro-pacientes', verificarLogin, (req, res) => {
     res.sendFile(__dirname + "/cadastro-pacientes.html");
 });
 
-app.post('/cadastro-pacientes', async (req, res) => {
+app.post('/cadastro-pacientes', verificarLogin, async (req, res) => {
     const novoPaciente = req.body;
     const client = new MongoClient(url);
 
@@ -69,7 +100,7 @@ app.post('/cadastro-pacientes', async (req, res) => {
     }
 });
 
-app.get('/lista_pacientes', async (req, res) => {
+app.get('/lista_pacientes', verificarLogin, async (req, res) => {
     const client = new MongoClient(url);
     try {
         await client.connect();
@@ -80,8 +111,6 @@ app.get('/lista_pacientes', async (req, res) => {
             projection: { nome: 1, idade: 1, data_nascimento: 1, RG: 1, telefone: 1, _id: 1 , sobre:1 }
         }).toArray();
 
-    
-
         res.json(pacientes);
     } catch (err) {
         console.error('Erro ao buscar pacientes: ', err);
@@ -91,7 +120,7 @@ app.get('/lista_pacientes', async (req, res) => {
     }
 });
 
-app.get('/pacientes/:id', async (req, res) => {
+app.get('/pacientes/:id', verificarLogin, async (req, res) => {
     const { id } = req.params;
     const client = new MongoClient(url);
 
@@ -112,12 +141,11 @@ app.get('/pacientes/:id', async (req, res) => {
     }
 });
 
-// ------------------- CONSULTAS -------------------
-app.get('/cadastro-consultas', (req, res) => {
+app.get('/cadastro-consultas', verificarLogin, (req, res) => {
     res.sendFile(__dirname + '/cadastro-consultas.html');
 });
 
-app.post('/cadastro-consultas', async (req, res) => {
+app.post('/cadastro-consultas', verificarLogin, async (req, res) => {
     const { paciente_id, data, horario, tipo_consulta, observacoes } = req.body;
     const client = new MongoClient(url);
 
@@ -154,7 +182,7 @@ app.post('/cadastro-consultas', async (req, res) => {
     }
 });
 
-app.get('/lista_consultas', async (req, res) => {
+app.get('/lista_consultas', verificarLogin, async (req, res) => {
     const client = new MongoClient(url);
 
     try {
@@ -164,10 +192,8 @@ app.get('/lista_consultas', async (req, res) => {
         const consultasCollection = db.collection(collectionConsultas);
         const pacientesCollection = db.collection(collectionPacientes);
 
-        // pega todas as consultas
         const consultas = await consultasCollection.find({}).toArray();
 
-        // para cada consulta, busca o paciente pelo ID
         const consultasComPaciente = await Promise.all(
             consultas.map(async consulta => {
                 let pacienteNome = "Paciente não encontrado";
@@ -206,13 +232,11 @@ app.get('/lista_consultas', async (req, res) => {
     }
 });
 
-// Atualizar consulta (get)
-app.get('/atualizar-consulta', (req, res) => {
+app.get('/atualizar-consulta', verificarLogin, (req, res) => {
     res.sendFile(__dirname + '/atualizar-consultas.html');
 });
 
-// Atualizar consulta (post)
-app.post('/atualizar-consulta', async (req, res) => {
+app.post('/atualizar-consulta', verificarLogin, async (req, res) => {
     const { id, data, horario, paciente_id, observacoes } = req.body;
 
     const client = new MongoClient(url);
@@ -236,7 +260,7 @@ app.post('/atualizar-consulta', async (req, res) => {
 
         if (result.modifiedCount > 0) {
             console.log(`Consulta com ID ${id} atualizada com sucesso.`);
-            res.redirect('/'); // você pode mandar pra /lista_consultas também
+            res.redirect('/');
         } else {
             res.status(404).send('Consulta não encontrada.');
         }
@@ -249,8 +273,7 @@ app.post('/atualizar-consulta', async (req, res) => {
     }
 });
 
-// Deletar paciente
-app.post('/deletar-pacientes', async (req, res) => {
+app.post('/deletar-pacientes', verificarLogin, async (req, res) => {
     const { id } = req.body;
 
     const client = new MongoClient(url);
@@ -277,8 +300,7 @@ app.post('/deletar-pacientes', async (req, res) => {
     }
 });
 
-// Atualizar consulta
-app.post('/deletar-consulta', async (req,res)=>{
+app.post('/deletar-consulta', verificarLogin, async (req,res)=>{
     const { id } = req.body;
 
     const client = new MongoClient(url);
@@ -305,15 +327,11 @@ app.post('/deletar-consulta', async (req,res)=>{
     }
 });
 
-
-// Atualizar pacientes (get)
-app.get('/atualizar-pacientes', (req,res)=>{
+app.get('/atualizar-pacientes', verificarLogin, (req,res)=>{
     res.sendFile(__dirname + '/atualizar-pacientes.html')
 })
 
-
-// Atualizar pacientes (post)
-app.post('/atualizar-pacientes', async (req,res)=>{
+app.post('/atualizar-pacientes', verificarLogin, async (req,res)=>{
     const { nome, idade, data_nascimento, RG, telefone, sobre } = req.body
 
     const client = new MongoClient(url)
@@ -344,15 +362,12 @@ app.post('/atualizar-pacientes', async (req,res)=>{
         client.close()
     }
 })
-// ------------------- Consultas -------------------
 
-
-
-app.get('/cadastro-vendas', (req, res) => {
+app.get('/cadastro-vendas', verificarLogin, (req, res) => {
     res.sendFile(__dirname + '/cadastro-consultas.html');
 });
 
-app.post('/cadastro-vendas', async (req, res) => {
+app.post('/cadastro-vendas', verificarLogin, async (req, res) => {
     const novaVenda = req.body;
     const client = new MongoClient(url);
 
@@ -373,50 +388,7 @@ app.post('/cadastro-vendas', async (req, res) => {
     }
 });
 
-// Página HTML para atualizar consulta
-app.get('/atualizar-consulta', (req, res) => {
-    res.sendFile(__dirname + '/atualizar-consulta.html');
-});
-
-// Rota para atualizar consulta no banco
-app.post('/atualizar-consulta', async (req, res) => {
-    const { id, data, horario, paciente_id, observacoes } = req.body;
-
-    const client = new MongoClient(url);
-
-    try {
-        await client.connect();
-        const db = client.db(dbName);
-        const collection = db.collection(collectionConsultas);
-
-        const result = await collection.updateOne(
-            { _id: new ObjectId(id) },
-            {
-                $set: {
-                    data,
-                    horario,
-                    paciente_id,
-                    observacoes
-                }
-            }
-        );
-
-        if (result.modifiedCount > 0) {
-            console.log(`Consulta com ID ${id} atualizada com sucesso.`);
-            res.redirect('/'); // você pode mandar pra /lista_consultas também
-        } else {
-            res.status(404).send('Consulta não encontrada.');
-        }
-
-    } catch (err) {
-        console.error('Erro ao atualizar consulta: ', err);
-        res.status(500).send('Erro ao atualizar consulta. Por favor tente novamente mais tarde');
-    } finally {
-        client.close();
-    }
-});
-
-app.get('/lista_vendas', async (req, res) => {
+app.get('/lista_vendas', verificarLogin, async (req, res) => {
     const client = new MongoClient(url);
 
     try {
@@ -434,7 +406,6 @@ app.get('/lista_vendas', async (req, res) => {
     }
 });
 
-// ------------------- START SERVER -------------------
 app.listen(port, () => {
     console.log(`Servidor rodando em: http://localhost:${port}`);
 });

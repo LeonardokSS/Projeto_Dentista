@@ -382,25 +382,43 @@ document.addEventListener('DOMContentLoaded', async function() {
     }, 300 + (index * 200));
   });
 
-  // --- Atualiza a lista de consultas ---
-  async function atualizarConsultas() {
-  const dataAtualISO = new Date().toISOString().split('T')[0]; // ex: "2025-10-10"
+ // --- Atualiza a lista de consultas ---
+async function atualizarConsultas() {
+  const agora = new Date();
+  
+  // Data atual no formato YYYY-MM-DD (horário local)
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, '0');
+  const dia = String(agora.getDate()).padStart(2, '0');
+  const dataAtualISO = `${ano}-${mes}-${dia}`; // "2025-01-10"
+  
   const lista = document.getElementById('consultationList');
 
   try {
     const response = await fetch('/lista_consultas');
     const consultas = await response.json();
 
-    console.log("✅ Consultas recebidas:", consultas); // DEBUG
+    console.log("✅ Consultas recebidas:", consultas);
+    console.log("📅 Data atual:", dataAtualISO);
 
-    // Filtra consultas do dia atual
-    const consultasHoje = consultas.filter(c => c.data === dataAtualISO);
+    // Filtra APENAS por data (mostra TODAS as consultas de hoje)
+    const consultasHoje = consultas.filter(c => {
+      console.log(`📋 Consulta: ${c.data} ${c.horario} - ${c.paciente_nome}`);
+      
+      // Verifica apenas se a data é hoje
+      const ehHoje = c.data === dataAtualISO;
+      console.log(`📅 É hoje? ${c.data} === ${dataAtualISO}? ${ehHoje}`);
+      
+      return ehHoje;
+    });
 
-    // Ordena por horário decrescente
-    consultasHoje.sort((a, b) => b.horario.localeCompare(a.horario));
+    console.log("🎯 Consultas de hoje:", consultasHoje);
+
+    // Ordena por horário crescente
+    consultasHoje.sort((a, b) => a.horario.localeCompare(b.horario));
 
     if (consultasHoje.length === 0) {
-      lista.innerHTML = `<div class="no-consultations">Nenhuma consulta marcada para hoje.</div>`;
+      lista.innerHTML = `<div class="no-consultations">Nenhuma consulta para hoje.</div>`;
     } else {
       lista.innerHTML = consultasHoje.map(c => `
         <div class="consultation-item p-2 border-bottom">
